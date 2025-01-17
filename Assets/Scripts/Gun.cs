@@ -9,26 +9,24 @@ public class Gun : MonoBehaviour
     [SerializeField] private EmptyShell         shellPrefab;
     [SerializeField] private Transform          shellPosition;
 
+    public int remainAmmo;
+    public float fireDelay;
+
+
     private UsedMagazine _usedMagazine;
     private Animator     _animator;
-
-    public float  fireDelay = 0.5f;
-
-    private bool  _canFire;
 
     private void Awake()
     {
         _animator = GetComponent<Animator>();
         magSocket.selectEntered.AddListener(OnMagazineInserted);
-        
-        _canFire = true;
     }
 
     private void OnMagazineInserted(SelectEnterEventArgs args)
     {
         var magazine = args.interactableObject.transform.GetComponent<Magazine>();
-        
-        // 총알 추가
+
+        remainAmmo += magazine.ammoCount;
 
         Destroy(magazine.gameObject);
         
@@ -37,32 +35,52 @@ public class Gun : MonoBehaviour
         _usedMagazine.transform.localRotation = Quaternion.identity;
         
         magSocket.socketActive = false;
+
+        _animator.SetBool("IsBackward", false);
+    }
+
+    private void OnMagazineEmpty()
+    {
+        if (_usedMagazine == null) return;
+
+        _usedMagazine.OnEmpty();
+
+        magSocket.socketActive = true;
     }
 
     public void Fire()
     {
-        if (_usedMagazine == null)
-            return;
-
-        if (_canFire == false)
-            return;
-        
-        StartCoroutine(FireCoroutine());
+        if (remainAmmo <= 0)
+        {
+            // 총알 부족 처리
+        }
+        else
+        {
+            if (_fireCoroutine != null)
+                StopCoroutine(_fireCoroutine);
+            _fireCoroutine = FireCoroutine();
+            StartCoroutine(_fireCoroutine);
+        }
     }
-    
-    private IEnumerator FireCoroutine()
+
+    IEnumerator _fireCoroutine;
+    IEnumerator FireCoroutine()
     {
-        _canFire = false;
-        
-        _animator.ResetTrigger("Shot");
-        _animator.SetTrigger("Shot");
-        
+        _animator.SetBool("IsBackward", true);
+
+        ExhaustShell();
+
         yield return new WaitForSeconds(fireDelay);
-        
-        _canFire = true;
+
+        remainAmmo--;
+
+        if (remainAmmo >= 1)
+            _animator.SetBool("IsBackward", false);
+        else
+            OnMagazineEmpty();
     }
 
-    public void ExhaustShell()
+    private void ExhaustShell()
     {
         Instantiate(shellPrefab, shellPosition.position, shellPosition.rotation);
     }
