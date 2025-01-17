@@ -6,19 +6,20 @@ public class Gun : MonoBehaviour
 {
     [SerializeField] private UsedMagazine       magPrefab;
     [SerializeField] private XRSocketInteractor magSocket;
+    [SerializeField] private XRGrabInteractable grabInteractable;
     [SerializeField] private EmptyShell         shellPrefab;
     [SerializeField] private Transform          shellPosition;
 
     public int remainAmmo;
     public float fireDelay;
 
-
-    private UsedMagazine _usedMagazine;
-    private Animator     _animator;
+    private UsedMagazine          _usedMagazine;
+    private Animator              _animator;
 
     private void Awake()
     {
         _animator = GetComponent<Animator>();
+
         magSocket.selectEntered.AddListener(OnMagazineInserted);
     }
 
