@@ -4,11 +4,13 @@ public class HitTarget : MonoBehaviour
 {
     public Vector3 HitPoint { get; set; }
 
+    private BoxCollider _collider;
     private Animator _anim;
     private bool _isAppear = true;
     
     private void Awake()
     {
+        _collider = GetComponent<BoxCollider>();
         _anim = GetComponent<Animator>();
         gameObject.layer = LayerMask.NameToLayer("HitTarget");
     }
@@ -34,5 +36,9 @@ public class HitTarget : MonoBehaviour
     public void OnHit()
     {
         Disappear();
+
+        var localHitPoint = transform.InverseTransformPoint(HitPoint);
+
+        var distance = Vector3.Distance(_collider.center, localHitPoint);
     }
 }
