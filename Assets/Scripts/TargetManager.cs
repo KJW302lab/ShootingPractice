@@ -25,9 +25,6 @@ public class TargetManager : MonoBehaviour
     {
         _targetList = FindObjectsByType<HitTarget>(FindObjectsInactive.Include, FindObjectsSortMode.None)
             .ToList();
-
-        foreach (var hitTarget in _targetList)
-            hitTarget.Disappear();
     }
 
     public void StartPractice()
@@ -35,8 +32,7 @@ public class TargetManager : MonoBehaviour
         if (_targetAppearCoroutine != null)
         {
             StopCoroutine(_targetAppearCoroutine);
-            foreach (var hitTarget in _targetList)
-                hitTarget.Disappear();
+            DisappearAll();
         }
 
         _targetAppearCoroutine = TargetAppearCoroutine();
@@ -46,25 +42,39 @@ public class TargetManager : MonoBehaviour
     private IEnumerator _targetAppearCoroutine;
     IEnumerator TargetAppearCoroutine()
     {
-        var copiedTargetList = new List<HitTarget>();
-        copiedTargetList.AddRange(_targetList);
-            
-        var randomCount = Random.Range(1, _targetList.Count);
+        DisappearAll();
 
-        for (int i = 0; i < randomCount; i++)
+        yield return new WaitForSeconds(1f);
+        
+        while (gameObject.activeSelf)
         {
-            var randomIndex = Random.Range(0, copiedTargetList.Count);
-
-            var target = copiedTargetList[randomIndex];
-            copiedTargetList.Remove(target);
-                
-            target.Appear();
-
-            yield return new WaitForSeconds(Random.Range(0.1f, 1.5f));
-        }
-
-        yield return new WaitForSeconds(3f);
+            var copiedTargetList = new List<HitTarget>();
+            copiedTargetList.AddRange(_targetList);
             
+            var randomCount = Random.Range(1, _targetList.Count);
+
+            for (int i = 0; i < randomCount; i++)
+            {
+                var randomIndex = Random.Range(0, copiedTargetList.Count);
+
+                var target = copiedTargetList[randomIndex];
+                copiedTargetList.Remove(target);
+                
+                target.Appear();
+
+                yield return new WaitForSeconds(0.5f);
+            }
+
+            yield return new WaitForSeconds(3f);
+            
+            DisappearAll();
+            
+            yield return new WaitForSeconds(3f);
+        }
+    }
+    
+    private void DisappearAll()
+    {
         foreach (var hitTarget in _targetList)
             hitTarget.Disappear();
     }
