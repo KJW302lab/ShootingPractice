@@ -3,7 +3,9 @@ using UnityEngine;
 public class GunFX : MonoBehaviour
 {
     [SerializeField] private ParticleSystem fx;
-    [SerializeField] private AudioClip      audioClip;
+    [SerializeField] private AudioClip      fireSound;
+    [SerializeField] private AudioClip      emptySound;
+    [SerializeField] private AudioClip      reloadSound;
 
     private AudioSource _audioSource;
 
@@ -12,9 +14,19 @@ public class GunFX : MonoBehaviour
         _audioSource = GetComponent<AudioSource>();
     }
 
-    public void Play()
+    public void PlayFire()
     {
         fx.Play();
-        _audioSource.PlayOneShot(audioClip);
+        _audioSource.PlayOneShot(fireSound);
+    }
+
+    public void PlayEmpty()
+    {
+        _audioSource.PlayOneShot(emptySound);
+    }
+
+    public void PlayReload()
+    {
+        _audioSource.PlayOneShot(reloadSound);
     }
 }

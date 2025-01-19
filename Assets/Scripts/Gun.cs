@@ -54,9 +54,7 @@ public class Gun : MonoBehaviour
     public void Fire()
     {
         if (remainAmmo <= 0)
-        {
-            // 총알 부족 처리
-        }
+            gunFX.PlayEmpty();
         else
         {
             if (_fireCoroutine != null)
@@ -77,7 +75,7 @@ public class Gun : MonoBehaviour
 
         remainAmmo--;
         
-        gunFX.Play();
+        gunFX.PlayFire();
         
         if (rayCaster.CurrentTarget != null)
         {
