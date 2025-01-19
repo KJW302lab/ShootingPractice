@@ -10985,6 +10985,7 @@ MonoBehaviour:
   shellPrefab: {fileID: 2570856377577882359, guid: bd4b7915d56094bd0ba4d56c41e9119d,
     type: 3}
   shellPosition: {fileID: 2053734511}
+  rayCaster: {fileID: 736607551}
   remainAmmo: 0
   fireDelay: 0.1
 --- !u!95 &6583217803913622242

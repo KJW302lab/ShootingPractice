@@ -9,6 +9,7 @@ public class Gun : MonoBehaviour
     [SerializeField] private XRGrabInteractable grabInteractable;
     [SerializeField] private EmptyShell         shellPrefab;
     [SerializeField] private Transform          shellPosition;
+    [SerializeField] private GunRaycaster       rayCaster;
 
     public int remainAmmo;
     public float fireDelay;
@@ -42,9 +43,9 @@ public class Gun : MonoBehaviour
 
     private void OnMagazineEmpty()
     {
-        if (_usedMagazine == null) return;
+        _usedMagazine?.OnEmpty();
 
-        _usedMagazine.OnEmpty();
+        _usedMagazine = null;
 
         magSocket.socketActive = true;
     }
@@ -74,6 +75,12 @@ public class Gun : MonoBehaviour
         yield return new WaitForSeconds(fireDelay);
 
         remainAmmo--;
+        
+        if (rayCaster.CurrentTarget != null)
+        {
+            var target = rayCaster.CurrentTarget;
+            target.OnHit();
+        }
 
         if (remainAmmo >= 1)
             _animator.SetBool("IsBackward", false);

@@ -4,13 +4,15 @@ public class GunRaycaster : MonoBehaviour
 {
     [SerializeField] Gradient notDetected;
     [SerializeField] Gradient detected;
-
+    
     [SerializeField] Transform rayOrigin;
     [SerializeField] float rayDistance = 30f;
     [SerializeField] LayerMask targetLayer;
-
+    
+    public HitTarget CurrentTarget { get; private set; }
+    
     private LineRenderer _lineRenderer;
-    RaycastHit _hit;
+    private RaycastHit _hit;
 
     private void Awake()
     {
@@ -31,15 +33,23 @@ public class GunRaycaster : MonoBehaviour
 
         if (Physics.Raycast(rayOrigin.position, rayOrigin.forward, out _hit, rayDistance, targetLayer))
         {
-            Debug.Log($"Hit {_hit.collider.name}");
-
             _lineRenderer.SetPosition(1, _hit.point);
             _lineRenderer.colorGradient = detected;
+
+            var target = _hit.collider.GetComponent<HitTarget>();
+
+            if (target != null)
+            {
+                CurrentTarget = target;
+                CurrentTarget.HitPoint = _hit.point;
+            }
         }
         else
         {
             _lineRenderer.SetPosition(1, rayStart + rayDirection * rayDistance);
             _lineRenderer.colorGradient = notDetected;
+
+            CurrentTarget = null;
         }
     }
 }
