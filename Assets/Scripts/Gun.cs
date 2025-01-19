@@ -10,6 +10,7 @@ public class Gun : MonoBehaviour
     [SerializeField] private EmptyShell         shellPrefab;
     [SerializeField] private Transform          shellPosition;
     [SerializeField] private GunRaycaster       rayCaster;
+    [SerializeField] private GunFX              gunFX;
 
     public int remainAmmo;
     public float fireDelay;
@@ -75,6 +76,8 @@ public class Gun : MonoBehaviour
         yield return new WaitForSeconds(fireDelay);
 
         remainAmmo--;
+        
+        gunFX.Play();
         
         if (rayCaster.CurrentTarget != null)
         {

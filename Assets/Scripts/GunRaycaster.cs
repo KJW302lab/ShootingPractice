@@ -19,8 +19,6 @@ public class GunRaycaster : MonoBehaviour
         _lineRenderer = GetComponent<LineRenderer>();
 
         _lineRenderer.positionCount = 2;
-        _lineRenderer.startWidth = 0.05f;
-        _lineRenderer.endWidth = 0.05f;
         _lineRenderer.useWorldSpace = true;
     }
 
